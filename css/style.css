@@ -1,0 +1,96 @@
+*,
+*::after,
+*::before {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --color-bg: linear-gradient(to top, #010329, #000005);
+    --color-glass: rgba(255, 255, 255, 0.05);
+    --color-water: #414141;
+}
+
+body {
+    background-image: var(--color-bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif, system-ui;
+}
+
+.greetings {
+    font-size: 4.5rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    text-shadow: 0 0 20px rgba(255, 235, 59, 0.5);
+}
+
+.greetings > span {
+    animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% {
+        color: #fff;
+        text-shadow: 0 0 12px rgba(255, 235, 59, 0.6);
+    }
+    50% {
+        color: #ffd54f;
+        text-shadow: 0 0 30px rgba(255, 215, 0, 0.9);
+    }
+}
+
+.description {
+    font-size: 1.2rem;
+    color: #f0f0f0;
+    margin-bottom: 35px;
+    letter-spacing: 2px;
+    text-align: center;
+    opacity: 0.9;
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.botones {
+    background: linear-gradient(135deg, #ffd54f, #ffb300);
+    border: none;
+    border-radius: 30px;
+    padding: 14px 32px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(255, 179, 0, 0.4);
+    animation: pulseGlow 2s infinite;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.botones a {
+    color: #1a1a1a;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 1.5px;
+    display: block;
+}
+
+.botones:hover {
+    transform: scale(1.08);
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(255, 213, 79, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 32px rgba(255, 213, 79, 0.9);
+    }
+}

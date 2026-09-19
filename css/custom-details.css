@@ -1,0 +1,237 @@
+/* ==========================================================
+   AMBIENTACIÓN, LUCES, CARTA, SUBTÍTULOS Y REPETICIÓN
+   ========================================================== */
+
+/* Fondo canvas detrás de todo */
+#ambientCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Contenedor y fondo para la letra sincronizada */
+.lyrics-glow {
+    position: fixed;
+    top: 7%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 700px;
+    text-align: center;
+    z-index: 150; /* Por encima de las flores */
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    background: radial-gradient(ellipse at center, rgba(10, 15, 25, 0.75) 0%, rgba(10, 15, 25, 0) 75%);
+    padding: 12px 20px;
+    border-radius: 16px;
+}
+
+.lyrics-glow .line-original {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.3rem;
+    font-weight: 700;
+    color: #fff8b3;
+    line-height: 1.2;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.9), 0 2px 6px rgba(0, 0, 0, 0.9);
+}
+
+.lyrics-glow .line-spanish {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: #ffe082;
+    letter-spacing: 0.8px;
+    margin-top: 6px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95), 0 0 12px rgba(255, 193, 7, 0.4);
+}
+
+@media (max-width: 600px) {
+    .lyrics-glow {
+        top: 5%;
+        width: 95%;
+        padding: 8px 10px;
+    }
+    .lyrics-glow .line-original {
+        font-size: 1.7rem;
+    }
+    .lyrics-glow .line-spanish {
+        font-size: 0.88rem;
+    }
+}
+
+/* Control flotante de audio */
+.audio-control {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 235, 59, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.4rem;
+    z-index: 100;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 10px rgba(255, 235, 59, 0.3);
+    transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.audio-control:hover {
+    transform: scale(1.1);
+    background: rgba(255, 235, 59, 0.25);
+}
+
+/* Botón flotante para la carta */
+.open-letter-btn {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    padding: 10px 18px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 235, 59, 0.5);
+    border-radius: 25px;
+    color: #fffae0;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.open-letter-btn:hover {
+    background: rgba(255, 235, 59, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 235, 59, 0.35);
+}
+
+/* Botón de repetir al finalizar */
+.replay-btn {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(30px);
+    padding: 12px 26px;
+    background: linear-gradient(135deg, #ffd54f, #ffb300);
+    color: #1a1a1a;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    z-index: 180;
+    opacity: 0;
+    pointer-events: none;
+    box-shadow: 0 4px 20px rgba(255, 179, 0, 0.5);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.replay-btn.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+    animation: pulseReplay 2s infinite;
+}
+
+.replay-btn:hover {
+    transform: translateX(-50%) scale(1.06);
+}
+
+@keyframes pulseReplay {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(255, 213, 79, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(255, 213, 79, 0.9);
+    }
+}
+
+/* Modal de la carta */
+.letter-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    z-index: 200;
+}
+
+.letter-modal.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.letter-content {
+    background: linear-gradient(145deg, #1b1c24, #121319);
+    border: 1px solid rgba(255, 235, 59, 0.35);
+    border-radius: 18px;
+    padding: 30px;
+    max-width: 440px;
+    width: 88%;
+    color: #f5f5f5;
+    font-family: 'Poppins', sans-serif;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.15);
+    transform: translateY(20px);
+    transition: transform 0.4s ease;
+}
+
+.letter-modal.active .letter-content {
+    transform: translateY(0);
+}
+
+.letter-content h2 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.3rem;
+    color: #ffe066;
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+.letter-content p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #e0e0e0;
+}
+
+.letter-signature {
+    margin-top: 18px;
+    text-align: right;
+    font-style: italic;
+    color: #ffd54f !important;
+}
+
+.close-letter-btn {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 1.8rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.close-letter-btn:hover {
+    color: #fff;
+}
