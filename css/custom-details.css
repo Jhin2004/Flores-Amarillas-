@@ -1,277 +1,349 @@
-/* ==========================================================
-   AMBIENTACIÓN, LUCES, CARTA, SUBTÍTULOS Y RESPONSIVIDAD MÓVIL
-   ========================================================== */
+<!DOCTYPE html>
+<html lang="es">
 
-/* Fondo canvas detrás de todo */
-#ambientCanvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-    z-index: 1;
-}
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="icon" href="img/flowers.png" type="image/x-icon">
+    <title>Flores Amarillas Para Ti 🌻</title>
 
-/* Letras de la canción: siempre centradas en pantalla */
-.lyrics-glow {
-    position: fixed;
-    top: 6%;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 90% !important;
-    max-width: 650px;
-    text-align: center !important;
-    z-index: 150;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.4s ease, transform 0.4s ease;
-    background: radial-gradient(ellipse at center, rgba(10, 15, 25, 0.75) 0%, rgba(10, 15, 25, 0) 75%);
-    padding: 10px 15px;
-    border-radius: 16px;
-    box-sizing: border-box;
-}
+    <!-- Fuentes elegantes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/custom-details.css?v=4">
+</head>
 
-.lyrics-glow .line-original {
-    font-family: 'Dancing Script', cursive;
-    font-size: 2.2rem;
-    font-weight: 700;
-    color: #fff8b3;
-    line-height: 1.2;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.9), 0 2px 6px rgba(0, 0, 0, 0.9);
-    word-wrap: break-word;
-}
+<body class="container">
+    <!-- Lienzo de fondo con luciérnagas -->
+    <canvas id="ambientCanvas"></canvas>
 
-.lyrics-glow .line-spanish {
-    font-family: 'Poppins', sans-serif;
-    font-size: 1rem;
-    font-weight: 400;
-    color: #ffe082;
-    letter-spacing: 0.8px;
-    margin-top: 5px;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95), 0 0 12px rgba(255, 193, 7, 0.4);
-    word-wrap: break-word;
-}
+    <!-- Control de música flotante -->
+    <div class="audio-control" id="audioBtn" title="Pausar / Reproducir música">
+        <span id="audioIcon">🎵</span>
+    </div>
 
-/* Control flotante de audio */
-.audio-control {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 235, 59, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 1.3rem;
-    z-index: 160;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 235, 59, 0.3);
-    transition: transform 0.25s ease, background 0.25s ease;
-}
+    <!-- Botón para abrir la carta -->
+    <button class="open-letter-btn" id="openLetterBtn">💌 Leer una cartita</button>
 
-.audio-control:hover {
-    transform: scale(1.1);
-    background: rgba(255, 235, 59, 0.25);
-}
+    <!-- Botón para repetir la experiencia al terminar -->
+    <button class="replay-btn" id="replayBtn">🔄 Repetir detalle</button>
 
-/* Botón flotante para la carta */
-.open-letter-btn {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    padding: 9px 16px;
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 235, 59, 0.5);
-    border-radius: 25px;
-    color: #fffae0;
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.88rem;
-    cursor: pointer;
-    z-index: 160;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    transition: all 0.3s ease;
-}
+    <!-- Modal con mensaje para ella -->
+    <div class="letter-modal" id="letterModal">
+        <div class="letter-content">
+            <button class="close-letter-btn" id="closeLetterBtn">&times;</button>
+            <h2>Para ti ✨</h2>
+            <p>
+                Estas flores amarillas representan la luz y la alegría que traes a cada uno de mis días. 
+                Que nunca se apague tu hermosa sonrisa y que cada momento juntos siga floreciendo con la misma fuerza y ternura.
+            </p>
+            <p class="letter-signature">Con todo mi amor 💛</p>
+        </div>
+    </div>
 
-.open-letter-btn:hover {
-    background: rgba(255, 235, 59, 0.25);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(255, 235, 59, 0.35);
-}
+    <div class="night"></div>
 
-/* Botón de repetir */
-.replay-btn {
-    position: fixed;
-    bottom: 20px;
-    left: 50% !important;
-    transform: translateX(-50%) translateY(30px);
-    padding: 10px 22px;
-    background: linear-gradient(135deg, #ffd54f, #ffb300);
-    color: #1a1a1a;
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.92rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    z-index: 170;
-    opacity: 0;
-    pointer-events: none;
-    box-shadow: 0 4px 20px rgba(255, 179, 0, 0.5);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-    white-space: nowrap;
-}
+    <!-- Letras sincronizadas en inglés y español -->
+    <div id="lyrics" class="lyrics-glow"></div>
 
-.replay-btn.visible {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateX(-50%) translateY(0);
-    animation: pulseReplay 2s infinite;
-}
+    <!-- Flores completas -->
+    <div class="flowers">
+        <div class="flower flower--1">
+            <div class="flower__leafs flower__leafs--1">
+                <div class="flower__leaf flower__leaf--1"></div>
+                <div class="flower__leaf flower__leaf--2"></div>
+                <div class="flower__leaf flower__leaf--3"></div>
+                <div class="flower__leaf flower__leaf--4"></div>
+                <div class="flower__white-circle"></div>
 
-@keyframes pulseReplay {
-    0%, 100% {
-        box-shadow: 0 0 15px rgba(255, 213, 79, 0.5);
-    }
-    50% {
-        box-shadow: 0 0 30px rgba(255, 213, 79, 0.9);
-    }
-}
+                <div class="flower__light flower__light--1"></div>
+                <div class="flower__light flower__light--2"></div>
+                <div class="flower__light flower__light--3"></div>
+                <div class="flower__light flower__light--4"></div>
+                <div class="flower__light flower__light--5"></div>
+                <div class="flower__light flower__light--6"></div>
+                <div class="flower__light flower__light--7"></div>
+                <div class="flower__light flower__light--8"></div>
+            </div>
+            <div class="flower__line">
+                <div class="flower__line__leaf flower__line__leaf--1"></div>
+                <div class="flower__line__leaf flower__line__leaf--2"></div>
+                <div class="flower__line__leaf flower__line__leaf--3"></div>
+                <div class="flower__line__leaf flower__line__leaf--4"></div>
+                <div class="flower__line__leaf flower__line__leaf--5"></div>
+                <div class="flower__line__leaf flower__line__leaf--6"></div>
+            </div>
+        </div>
 
-/* Modal de la carta */
-.letter-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(6px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s ease;
-    z-index: 200;
-}
+        <div class="flower flower--2">
+            <div class="flower__leafs flower__leafs--2">
+                <div class="flower__leaf flower__leaf--1"></div>
+                <div class="flower__leaf flower__leaf--2"></div>
+                <div class="flower__leaf flower__leaf--3"></div>
+                <div class="flower__leaf flower__leaf--4"></div>
+                <div class="flower__white-circle"></div>
 
-.letter-modal.active {
-    opacity: 1;
-    pointer-events: auto;
-}
+                <div class="flower__light flower__light--1"></div>
+                <div class="flower__light flower__light--2"></div>
+                <div class="flower__light flower__light--3"></div>
+                <div class="flower__light flower__light--4"></div>
+                <div class="flower__light flower__light--5"></div>
+                <div class="flower__light flower__light--6"></div>
+                <div class="flower__light flower__light--7"></div>
+                <div class="flower__light flower__light--8"></div>
+            </div>
+            <div class="flower__line">
+                <div class="flower__line__leaf flower__line__leaf--1"></div>
+                <div class="flower__line__leaf flower__line__leaf--2"></div>
+                <div class="flower__line__leaf flower__line__leaf--3"></div>
+                <div class="flower__line__leaf flower__line__leaf--4"></div>
+            </div>
+        </div>
 
-.letter-content {
-    background: linear-gradient(145deg, #1b1c24, #121319);
-    border: 1px solid rgba(255, 235, 59, 0.35);
-    border-radius: 18px;
-    padding: 24px;
-    max-width: 420px;
-    width: 86%;
-    color: #f5f5f5;
-    font-family: 'Poppins', sans-serif;
-    position: relative;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.15);
-    transform: translateY(20px);
-    transition: transform 0.4s ease;
-    box-sizing: border-box;
-}
+        <div class="flower flower--3">
+            <div class="flower__leafs flower__leafs--3">
+                <div class="flower__leaf flower__leaf--1"></div>
+                <div class="flower__leaf flower__leaf--2"></div>
+                <div class="flower__leaf flower__leaf--3"></div>
+                <div class="flower__leaf flower__leaf--4"></div>
+                <div class="flower__white-circle"></div>
 
-.letter-modal.active .letter-content {
-    transform: translateY(0);
-}
+                <div class="flower__light flower__light--1"></div>
+                <div class="flower__light flower__light--2"></div>
+                <div class="flower__light flower__light--3"></div>
+                <div class="flower__light flower__light--4"></div>
+                <div class="flower__light flower__light--5"></div>
+                <div class="flower__light flower__light--6"></div>
+                <div class="flower__light flower__light--7"></div>
+                <div class="flower__light flower__light--8"></div>
+            </div>
+            <div class="flower__line">
+                <div class="flower__line__leaf flower__line__leaf--1"></div>
+                <div class="flower__line__leaf flower__line__leaf--2"></div>
+                <div class="flower__line__leaf flower__line__leaf--3"></div>
+                <div class="flower__line__leaf flower__line__leaf--4"></div>
+            </div>
+        </div>
 
-.letter-content h2 {
-    font-family: 'Dancing Script', cursive;
-    font-size: 2.1rem;
-    color: #ffe066;
-    margin-top: 0;
-    margin-bottom: 10px;
-}
+        <div class="grow-ans" style="--d:1.2s">
+            <div class="flower__g-long">
+                <div class="flower__g-long__top"></div>
+                <div class="flower__g-long__bottom"></div>
+            </div>
+        </div>
 
-.letter-content p {
-    font-size: 0.9rem;
-    line-height: 1.55;
-    color: #e0e0e0;
-}
+        <div class="growing-grass">
+            <div class="flower__grass flower__grass--1">
+                <div class="flower__grass--top"></div>
+                <div class="flower__grass--bottom"></div>
+                <div class="flower__grass__leaf flower__grass__leaf--1"></div>
+                <div class="flower__grass__leaf flower__grass__leaf--2"></div>
+                <div class="flower__grass__leaf flower__grass__leaf--3"></div>
+                <div class="flower__grass__leaf flower__grass__leaf--4"></div>
+                <div class="flower__grass__leaf flower__grass__leaf--5"></div>
+                <div class="flower__grass__leaf flower__grass__leaf--6"></div>
+                <div class="flower__grass__overlay"></div>
+            </div>
+        </div>
 
-.letter-signature {
-    margin-top: 14px;
-    text-align: right;
-    font-style: italic;
-    color: #ffd54f !important;
-}
+        <div class="growing-grass">
+            <div class="flower__grass flower__grass--2">
+                <div class="flower__grass--top"></div>
+                <div class="flower__grass--bottom"></div>
+                <div class="flower__grass__leaf flower__grass__leaf--1"></div>
+                <div class="flower__grass__leaf flower__grass__leaf--2"></div>
+                <div class="flower__grass__leaf flower__grass__leaf--3"></div>
+                <div class="flower__grass__leaf flower__grass__leaf--4"></div>
+                <div class="flower__grass__overlay"></div>
+            </div>
+        </div>
 
-.close-letter-btn {
-    position: absolute;
-    top: 10px;
-    right: 14px;
-    background: none;
-    border: none;
-    color: #aaa;
-    font-size: 1.7rem;
-    cursor: pointer;
-    line-height: 1;
-}
+        <div class="grow-ans" style="--d:2.4s">
+            <div class="flower__g-right flower__g-right--1">
+                <div class="leaf"></div>
+            </div>
+        </div>
 
-/* ==========================================================
-   AJUSTES ESPECÍFICOS PARA TELÉFONOS MÓVILES (PANTALLAS ANGOSTAS)
-   ========================================================== */
-@media (max-width: 600px) {
-    /* Evitar cualquier desborde horizontal en móviles */
-    html, body {
-        overflow-x: hidden !important;
-        width: 100% !important;
-        position: relative;
-    }
+        <div class="grow-ans" style="--d:2.8s">
+            <div class="flower__g-right flower__g-right--2">
+                <div class="leaf"></div>
+            </div>
+        </div>
 
-    /* Redimensionar y centrar las flores para que no choquen con el texto */
-    .flowers {
-        transform: scale(0.68) translateY(12%) !important;
-        transform-origin: bottom center !important;
-    }
+        <div class="grow-ans" style="--d:2.8s">
+            <div class="flower__g-front">
+                <div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--1">
+                    <div class="flower__g-front__leaf"></div>
+                </div>
+                <div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--2">
+                    <div class="flower__g-front__leaf"></div>
+                </div>
+                <div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--3">
+                    <div class="flower__g-front__leaf"></div>
+                </div>
+                <div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--4">
+                    <div class="flower__g-front__leaf"></div>
+                </div>
+                <div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--5">
+                    <div class="flower__g-front__leaf"></div>
+                </div>
+                <div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--6">
+                    <div class="flower__g-front__leaf"></div>
+                </div>
+                <div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--7">
+                    <div class="flower__g-front__leaf"></div>
+                </div>
+                <div class="flower__g-front__leaf-wrapper flower__g-front__leaf-wrapper--8">
+                    <div class="flower__g-front__leaf"></div>
+                </div>
+                <div class="flower__g-front__line"></div>
+            </div>
+        </div>
 
-    /* Ajuste de fuente de la letra para que quepa completa */
-    .lyrics-glow {
-        top: 4% !important;
-        width: 92% !important;
-        padding: 6px 10px !important;
-    }
+        <div class="grow-ans" style="--d:3.2s">
+            <div class="flower__g-fr">
+                <div class="leaf"></div>
+                <div class="flower__g-fr__leaf flower__g-fr__leaf--1"></div>
+                <div class="flower__g-fr__leaf flower__g-fr__leaf--2"></div>
+                <div class="flower__g-fr__leaf flower__g-fr__leaf--3"></div>
+                <div class="flower__g-fr__leaf flower__g-fr__leaf--4"></div>
+                <div class="flower__g-fr__leaf flower__g-fr__leaf--5"></div>
+                <div class="flower__g-fr__leaf flower__g-fr__leaf--6"></div>
+                <div class="flower__g-fr__leaf flower__g-fr__leaf--7"></div>
+                <div class="flower__g-fr__leaf flower__g-fr__leaf--8"></div>
+            </div>
+        </div>
 
-    .lyrics-glow .line-original {
-        font-size: 1.55rem !important;
-        line-height: 1.25 !important;
-    }
+        <div class="long-g long-g--0">
+            <div class="grow-ans" style="--d:3s">
+                <div class="leaf leaf--0"></div>
+            </div>
+            <div class="grow-ans" style="--d:2.2s">
+                <div class="leaf leaf--1"></div>
+            </div>
+            <div class="grow-ans" style="--d:3.4s">
+                <div class="leaf leaf--2"></div>
+            </div>
+            <div class="grow-ans" style="--d:3.6s">
+                <div class="leaf leaf--3"></div>
+            </div>
+        </div>
 
-    .lyrics-glow .line-spanish {
-        font-size: 0.85rem !important;
-        margin-top: 3px !important;
-    }
+        <div class="long-g long-g--1">
+            <div class="grow-ans" style="--d:3.6s">
+                <div class="leaf leaf--0"></div>
+            </div>
+            <div class="grow-ans" style="--d:3.8s">
+                <div class="leaf leaf--1"></div>
+            </div>
+            <div class="grow-ans" style="--d:4s">
+                <div class="leaf leaf--2"></div>
+            </div>
+            <div class="grow-ans" style="--d:4.2s">
+                <div class="leaf leaf--3"></div>
+            </div>
+        </div>
 
-    /* Reubicar controles en la parte inferior de pantallas táctiles */
-    .open-letter-btn {
-        bottom: 16px !important;
-        left: 14px !important;
-        padding: 7px 14px !important;
-        font-size: 0.8rem !important;
-    }
+        <div class="long-g long-g--2">
+            <div class="grow-ans" style="--d:4s">
+                <div class="leaf leaf--0"></div>
+            </div>
+            <div class="grow-ans" style="--d:4.2s">
+                <div class="leaf leaf--1"></div>
+            </div>
+            <div class="grow-ans" style="--d:4.4s">
+                <div class="leaf leaf--2"></div>
+            </div>
+            <div class="grow-ans" style="--d:4.6s">
+                <div class="leaf leaf--3"></div>
+            </div>
+        </div>
 
-    .audio-control {
-        bottom: 16px !important;
-        right: 14px !important;
-        width: 42px !important;
-        height: 42px !important;
-        font-size: 1.15rem !important;
-    }
+        <div class="long-g long-g--3">
+            <div class="grow-ans" style="--d:4s">
+                <div class="leaf leaf--0"></div>
+            </div>
+            <div class="grow-ans" style="--d:4.2s">
+                <div class="leaf leaf--1"></div>
+            </div>
+            <div class="grow-ans" style="--d:3s">
+                <div class="leaf leaf--2"></div>
+            </div>
+            <div class="grow-ans" style="--d:3.6s">
+                <div class="leaf leaf--3"></div>
+            </div>
+        </div>
 
-    .replay-btn {
-        bottom: 16px !important;
-        padding: 8px 18px !important;
-        font-size: 0.84rem !important;
-    }
-}
+        <div class="long-g long-g--4">
+            <div class="grow-ans" style="--d:4s">
+                <div class="leaf leaf--0"></div>
+            </div>
+            <div class="grow-ans" style="--d:4.2s">
+                <div class="leaf leaf--1"></div>
+            </div>
+            <div class="grow-ans" style="--d:3s">
+                <div class="leaf leaf--2"></div>
+            </div>
+            <div class="grow-ans" style="--d:3.6s">
+                <div class="leaf leaf--3"></div>
+            </div>
+        </div>
+
+        <div class="long-g long-g--5">
+            <div class="grow-ans" style="--d:4s">
+                <div class="leaf leaf--0"></div>
+            </div>
+            <div class="grow-ans" style="--d:4.2s">
+                <div class="leaf leaf--1"></div>
+            </div>
+            <div class="grow-ans" style="--d:3s">
+                <div class="leaf leaf--2"></div>
+            </div>
+            <div class="grow-ans" style="--d:3.6s">
+                <div class="leaf leaf--3"></div>
+            </div>
+        </div>
+
+        <div class="long-g long-g--6">
+            <div class="grow-ans" style="--d:4.2s">
+                <div class="leaf leaf--0"></div>
+            </div>
+            <div class="grow-ans" style="--d:4.4s">
+                <div class="leaf leaf--1"></div>
+            </div>
+            <div class="grow-ans" style="--d:4.6s">
+                <div class="leaf leaf--2"></div>
+            </div>
+            <div class="grow-ans" style="--d:4.8s">
+                <div class="leaf leaf--3"></div>
+            </div>
+        </div>
+
+        <div class="long-g long-g--7">
+            <div class="grow-ans" style="--d:3s">
+                <div class="leaf leaf--0"></div>
+            </div>
+            <div class="grow-ans" style="--d:3.2s">
+                <div class="leaf leaf--1"></div>
+            </div>
+            <div class="grow-ans" style="--d:3.5s">
+                <div class="leaf leaf--2"></div>
+            </div>
+            <div class="grow-ans" style="--d:3.6s">
+                <div class="leaf leaf--3"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pista de audio -->
+    <audio id="bgMusic" src="sound/ChristianBasso&HaienQiu-Flowers.mp3" autoplay></audio>
+
+    <script src="main.js"></script>
+    <script src="anim.js"></script>
+    <script src="details.js"></script>
+</body>
+
+</html>
